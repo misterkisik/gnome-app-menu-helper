@@ -105,6 +105,68 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         'fr': 'Rechercher des applications...'
     },
 
+    # Multi-selection
+    'btn_select_mode': {
+        'ru': 'Выбор',
+        'en': 'Select',
+        'es': 'Selección',
+        'fr': 'Sélection'
+    },
+    'btn_select_mode_tooltip': {
+        'ru': 'Режим выделения нескольких приложений (или Ctrl+Клик)',
+        'en': 'Multi-selection mode (or Ctrl+Click)',
+        'es': 'Modo de selección múltiple (o Ctrl+Clic)',
+        'fr': 'Mode de sélection multiple (ou Ctrl+Clic)'
+    },
+    'btn_select_all': {
+        'ru': 'Выбрать все',
+        'en': 'Select All',
+        'es': 'Seleccionar todo',
+        'fr': 'Tout sélectionner'
+    },
+    'btn_deselect_all': {
+        'ru': 'Снять выбор',
+        'en': 'Deselect',
+        'es': 'Deseleccionar',
+        'fr': 'Désélectionner'
+    },
+    'selected_count': {
+        'ru': 'Выбрано: {count}',
+        'en': 'Selected: {count}',
+        'es': 'Seleccionados: {count}',
+        'fr': 'Sélectionnés : {count}'
+    },
+    'btn_move_selected_to_page': {
+        'ru': 'Переместить на страницу…',
+        'en': 'Move to Page…',
+        'es': 'Mover a la página…',
+        'fr': 'Déplacer vers la page…'
+    },
+    'btn_move_selected_to_folder': {
+        'ru': 'Поместить в папку…',
+        'en': 'Add to Folder…',
+        'es': 'Añadir a carpeta…',
+        'fr': 'Ajouter au dossier…'
+    },
+    'btn_create_folder_from_selected': {
+        'ru': 'Создать папку с выбранными',
+        'en': 'Create Folder with Selected',
+        'es': 'Crear carpeta con seleccionados',
+        'fr': 'Créer un dossier avec les sélectionnés'
+    },
+    'toast_moved_to_page': {
+        'ru': 'Перемещено {count} элементов на страницу {page}',
+        'en': 'Moved {count} items to page {page}',
+        'es': 'Se movieron {count} elementos a la página {page}',
+        'fr': '{count} éléments déplacés vers la page {page}'
+    },
+    'toast_added_to_folder': {
+        'ru': 'Добавлено {count} приложений в папку «{name}»',
+        'en': 'Added {count} apps to folder \'{name}\'',
+        'es': 'Se añadieron {count} aplicaciones a la carpeta \'{name}\'',
+        'fr': '{count} applications ajoutées au dossier « {name} »'
+    },
+
     # Pagination
     'page_info': {
         'ru': 'Страница {current} из {total}',

@@ -285,6 +285,41 @@ class AppMenuBackend:
             else:
                 self.pages[page_idx].append(item_id)
 
+    def move_multiple_items_to_page(self, item_ids: List[str], source_page: int, target_page: int) -> int:
+        """Moves multiple items from source_page to target_page preserving order."""
+        if target_page < 0 or target_page >= len(self.pages):
+            return 0
+        moved = 0
+        for item_id in item_ids:
+            if 0 <= source_page < len(self.pages) and item_id in self.pages[source_page]:
+                self.pages[source_page].remove(item_id)
+                self.pages[target_page].append(item_id)
+                moved += 1
+        return moved
+
+    def add_multiple_apps_to_folder(self, folder_id: str, item_ids: List[str]) -> int:
+        """Adds multiple apps into a folder, removing them from pages."""
+        folder = self.folders.get(folder_id)
+        if not folder:
+            return 0
+        added = 0
+        for item_id in item_ids:
+            # Cannot put folder inside folder
+            if item_id in self.apps:
+                self.remove_item_from_grid(item_id)
+                if item_id not in folder.apps:
+                    folder.apps.append(item_id)
+                    added += 1
+        return added
+
+    def remove_multiple_items_from_grid(self, item_ids: List[str]) -> int:
+        """Removes multiple items from the grid (to unassigned catalog)."""
+        removed = 0
+        for item_id in item_ids:
+            if self.remove_item_from_grid(item_id):
+                removed += 1
+        return removed
+
     # Folder operations
     def create_folder(self, name: str, app_ids: List[str], page_idx: int, pos: Optional[int] = None) -> FolderItem:
         """Creates a new folder with apps and places it on page_idx."""

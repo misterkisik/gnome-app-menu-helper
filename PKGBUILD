@@ -44,7 +44,7 @@ package() {
     ln -sf org.cleanarch.GnomeAppMenuHelper.desktop "$pkgdir/usr/share/applications/gnome-app-menu-helper.desktop"
 
     # Icons
-    for size in 32 48 64 128 256 512; do
+    for size in 16 24 32 48 64 128 256 512; do
         if [ -f "data/icons/hicolor/${size}x${size}/apps/org.cleanarch.GnomeAppMenuHelper.png" ]; then
             install -Dm644 "data/icons/hicolor/${size}x${size}/apps/org.cleanarch.GnomeAppMenuHelper.png" \
                 "$pkgdir/usr/share/icons/hicolor/${size}x${size}/apps/org.cleanarch.GnomeAppMenuHelper.png"

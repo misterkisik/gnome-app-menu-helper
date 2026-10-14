@@ -107,6 +107,28 @@ APP_CSS = """
     border-top: 1px solid rgba(255, 255, 255, 0.08);
     padding: 10px 20px;
 }
+
+.gnome-app-tile.selected-item, .gnome-folder-tile.selected-item {
+    background-color: rgba(53, 132, 228, 0.35);
+    outline: 2px solid #3584e4;
+    outline-offset: -2px;
+}
+
+.selection-badge {
+    background-color: #3584e4;
+    color: #ffffff;
+    border-radius: 999px;
+    min-width: 20px;
+    min-height: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.selection-action-bar {
+    background-color: rgba(28, 28, 36, 0.98);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 8px 16px;
+}
 """
 
 
@@ -119,7 +141,19 @@ class GnomeAppMenuHelperApp(Adw.Application):
 
     def do_startup(self):
         Adw.Application.do_startup(self)
+        self._setup_icon_theme()
         self._load_css()
+
+    def _setup_icon_theme(self):
+        display = Gdk.Display.get_default()
+        if display:
+            theme = Gtk.IconTheme.get_for_display(display)
+            local_icons = os.path.expanduser("~/.local/share/icons")
+            repo_icons = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data", "icons"))
+            if os.path.isdir(local_icons):
+                theme.add_search_path(local_icons)
+            if os.path.isdir(repo_icons):
+                theme.add_search_path(repo_icons)
 
     def _load_css(self):
         provider = Gtk.CssProvider()

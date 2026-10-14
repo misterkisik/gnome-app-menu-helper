@@ -1,6 +1,6 @@
 """
 AppWidget component representing a single application tile in the GNOME app grid.
-Supports drag-and-drop, hover feedback, and right-click context menu.
+Supports drag-and-drop, hover feedback, multi-selection, and right-click context menu.
 """
 
 from typing import Callable, Optional, List, Tuple
@@ -19,14 +19,22 @@ class AppWidget(Gtk.Box):
         app: AppItem,
         page_idx: int,
         pos_idx: int,
+        is_selected: bool = False,
+        is_selection_mode: bool = False,
+        on_toggle_select: Optional[Callable[[str], None]] = None,
+        get_selected_items: Optional[Callable[[], List[str]]] = None,
         on_move_left: Optional[Callable[[str, int], None]] = None,
         on_move_right: Optional[Callable[[str, int], None]] = None,
         on_move_to_page: Optional[Callable[[str, int, int], None]] = None,
+        on_move_selected_to_page: Optional[Callable[[List[str], int], None]] = None,
         on_add_to_folder: Optional[Callable[[str, str], None]] = None,
+        on_add_selected_to_folder: Optional[Callable[[List[str], str], None]] = None,
         on_create_folder_prompt: Optional[Callable[[str, str], None]] = None,
+        on_create_folder_from_selected: Optional[Callable[[List[str]], None]] = None,
         on_remove_from_page: Optional[Callable[[str, int], None]] = None,
         on_toggle_hide: Optional[Callable[[str], None]] = None,
         on_drop_on_app: Optional[Callable[[str, str], None]] = None,
+        on_deselect_all: Optional[Callable[[], None]] = None,
         get_page_count: Optional[Callable[[], int]] = None,
         get_folders: Optional[Callable[[], List[Tuple[str, str]]]] = None,
     ):
@@ -34,15 +42,23 @@ class AppWidget(Gtk.Box):
         self.app = app
         self.page_idx = page_idx
         self.pos_idx = pos_idx
+        self.is_selected = is_selected
+        self.is_selection_mode = is_selection_mode
 
+        self.on_toggle_select = on_toggle_select
+        self.get_selected_items = get_selected_items
         self.on_move_left = on_move_left
         self.on_move_right = on_move_right
         self.on_move_to_page = on_move_to_page
+        self.on_move_selected_to_page = on_move_selected_to_page
         self.on_add_to_folder = on_add_to_folder
+        self.on_add_selected_to_folder = on_add_selected_to_folder
         self.on_create_folder_prompt = on_create_folder_prompt
+        self.on_create_folder_from_selected = on_create_folder_from_selected
         self.on_remove_from_page = on_remove_from_page
         self.on_toggle_hide = on_toggle_hide
         self.on_drop_on_app = on_drop_on_app
+        self.on_deselect_all = on_deselect_all
         self.get_page_count = get_page_count
         self.get_folders = get_folders
 
@@ -55,11 +71,14 @@ class AppWidget(Gtk.Box):
         if self.app.nodisplay:
             self.add_css_class("hidden-app")
 
-        # Icon widget
-        icon_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        icon_box.set_halign(Gtk.Align.CENTER)
-        icon_box.set_valign(Gtk.Align.CENTER)
-        icon_box.set_size_request(64, 64)
+        if self.is_selected:
+            self.add_css_class("selected-item")
+
+        # Icon widget with overlay for selection badge
+        overlay = Gtk.Overlay()
+        overlay.set_halign(Gtk.Align.CENTER)
+        overlay.set_valign(Gtk.Align.CENTER)
+        overlay.set_size_request(64, 64)
 
         if self.app.gicon:
             self.icon_widget = Gtk.Image.new_from_gicon(self.app.gicon)
@@ -69,8 +88,16 @@ class AppWidget(Gtk.Box):
             self.icon_widget = Gtk.Image.new_from_icon_name("application-x-executable")
 
         self.icon_widget.set_pixel_size(64)
-        icon_box.append(self.icon_widget)
-        self.append(icon_box)
+        overlay.set_child(self.icon_widget)
+
+        if self.is_selected:
+            badge = Gtk.Label(label="✓")
+            badge.add_css_class("selection-badge")
+            badge.set_halign(Gtk.Align.END)
+            badge.set_valign(Gtk.Align.START)
+            overlay.add_overlay(badge)
+
+        self.append(overlay)
 
         # Label widget
         self.label = Gtk.Label(label=self.app.name)
@@ -126,11 +153,26 @@ class AppWidget(Gtk.Box):
         self.add_controller(drop_target)
 
     def _setup_gestures(self):
-        # Right Click Gesture
-        click_gesture = Gtk.GestureClick.new()
-        click_gesture.set_button(3)  # Secondary button (Right Click)
-        click_gesture.connect("pressed", self._on_right_click)
-        self.add_controller(click_gesture)
+        # Left Click Gesture (Select toggle or activation)
+        left_click = Gtk.GestureClick.new()
+        left_click.set_button(1)
+        left_click.connect("pressed", self._on_left_click)
+        self.add_controller(left_click)
+
+        # Right Click Gesture (Context Menu)
+        right_click = Gtk.GestureClick.new()
+        right_click.set_button(3)
+        right_click.connect("pressed", self._on_right_click)
+        self.add_controller(right_click)
+
+    def _on_left_click(self, gesture, _n_press, _x, _y):
+        current_event = gesture.get_current_event()
+        state = current_event.get_modifier_state() if current_event else 0
+        is_modifier = bool(state & (Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK))
+
+        if self.is_selection_mode or is_modifier:
+            if self.on_toggle_select:
+                self.on_toggle_select(self.app.id)
 
     def _on_right_click(self, _gesture, _n_press, x, y):
         self._show_context_menu(x, y)
@@ -151,6 +193,47 @@ class AppWidget(Gtk.Box):
         box.set_margin_end(6)
         box.set_margin_top(6)
         box.set_margin_bottom(6)
+
+        selected_items = self.get_selected_items() if self.get_selected_items else []
+        is_in_bulk = self.is_selected and len(selected_items) > 1
+
+        # Bulk Actions section if multiple items are selected
+        if is_in_bulk:
+            count = len(selected_items)
+            hdr = Gtk.Label(label=f"Выбрано: {count} элементов")
+            hdr.add_css_class("heading")
+            hdr.add_css_class("accent")
+            box.append(hdr)
+
+            # Move all to page
+            btn_bulk_page = Gtk.Button(label=f"📄  {tr('btn_move_selected_to_page')}")
+            btn_bulk_page.add_css_class("flat")
+            def on_bulk_page_clicked(_b):
+                popover.popdown()
+                self._show_bulk_page_picker(selected_items)
+            btn_bulk_page.connect("clicked", on_bulk_page_clicked)
+            box.append(btn_bulk_page)
+
+            # Put all to folder
+            btn_bulk_folder = Gtk.Button(label=f"📁  {tr('btn_move_selected_to_folder')}")
+            btn_bulk_folder.add_css_class("flat")
+            def on_bulk_folder_clicked(_b):
+                popover.popdown()
+                self._show_bulk_folder_picker(selected_items)
+            btn_bulk_folder.connect("clicked", on_bulk_folder_clicked)
+            box.append(btn_bulk_folder)
+
+            # Deselect
+            btn_desel = Gtk.Button(label=f"✕  {tr('btn_deselect_all')}")
+            btn_desel.add_css_class("flat")
+            def on_desel_clicked(_b):
+                popover.popdown()
+                if self.on_deselect_all:
+                    self.on_deselect_all()
+            btn_desel.connect("clicked", on_desel_clicked)
+            box.append(btn_desel)
+
+            box.append(Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL))
 
         # 1. Move Left
         btn_left = Gtk.Button(label=f"⬅️  {tr('ctx_move_left')}")
@@ -174,7 +257,7 @@ class AppWidget(Gtk.Box):
         btn_right.connect("clicked", on_right_clicked)
         box.append(btn_right)
 
-        # 3. Move to Page submenu / popover action
+        # 3. Move to Page
         total_pages = self.get_page_count() if self.get_page_count else 1
         if total_pages > 1:
             btn_page = Gtk.Button(label=f"📄  {tr('ctx_move_to_page')}")
@@ -187,7 +270,6 @@ class AppWidget(Gtk.Box):
             box.append(btn_page)
 
         # 4. Add to Folder
-        folders = self.get_folders() if self.get_folders else []
         btn_folder = Gtk.Button(label=f"📁  {tr('ctx_add_to_folder')}")
         btn_folder.add_css_class("flat")
         btn_folder.set_halign(Gtk.Align.FILL)
@@ -228,6 +310,68 @@ class AppWidget(Gtk.Box):
             self._launch_app()
         btn_launch.connect("clicked", on_launch_clicked)
         box.append(btn_launch)
+
+        popover.set_child(box)
+        popover.popup()
+
+    def _show_bulk_page_picker(self, items: List[str]):
+        popover = Gtk.Popover()
+        popover.set_parent(self)
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        box.set_margin_start(8)
+        box.set_margin_end(8)
+        box.set_margin_top(8)
+        box.set_margin_bottom(8)
+
+        lbl = Gtk.Label(label=tr("move_to_page_title"))
+        lbl.add_css_class("heading")
+        box.append(lbl)
+
+        total_pages = self.get_page_count() if self.get_page_count else 1
+        for p in range(total_pages):
+            if p == self.page_idx:
+                continue
+            btn = Gtk.Button(label=tr("page_info", current=p + 1, total=total_pages))
+            btn.add_css_class("flat")
+            def make_page_cb(target_p):
+                return lambda _b: (popover.popdown(), self.on_move_selected_to_page(items, target_p) if self.on_move_selected_to_page else None)
+            btn.connect("clicked", make_page_cb(p))
+            box.append(btn)
+
+        popover.set_child(box)
+        popover.popup()
+
+    def _show_bulk_folder_picker(self, items: List[str]):
+        popover = Gtk.Popover()
+        popover.set_parent(self)
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        box.set_margin_start(8)
+        box.set_margin_end(8)
+        box.set_margin_top(8)
+        box.set_margin_bottom(8)
+
+        lbl = Gtk.Label(label=tr("btn_move_selected_to_folder"))
+        lbl.add_css_class("heading")
+        box.append(lbl)
+
+        folders = self.get_folders() if self.get_folders else []
+        for f_id, f_name in folders:
+            btn = Gtk.Button(label=f"📁 {f_name}")
+            btn.add_css_class("flat")
+            def make_cb(fid):
+                return lambda _b: (popover.popdown(), self.on_add_selected_to_folder(items, fid) if self.on_add_selected_to_folder else None)
+            btn.connect("clicked", make_cb(f_id))
+            box.append(btn)
+
+        box.append(Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL))
+        btn_new = Gtk.Button(label=f"+ {tr('btn_create_folder_from_selected')}")
+        btn_new.add_css_class("suggested-action")
+        def on_new_clicked(_b):
+            popover.popdown()
+            if self.on_create_folder_from_selected:
+                self.on_create_folder_from_selected(items)
+        btn_new.connect("clicked", on_new_clicked)
+        box.append(btn_new)
 
         popover.set_child(box)
         popover.popup()

@@ -48,6 +48,7 @@ class MainWindow(Adw.ApplicationWindow):
             backend=self.backend,
             on_open_folder=self._on_open_folder,
             on_create_folder_prompt=self._on_create_folder_prompt,
+            on_create_folder_with_items=self._on_create_folder_with_items,
             on_delete_folder=self._on_delete_folder,
             on_toast=self.show_toast
         )
@@ -89,10 +90,22 @@ class MainWindow(Adw.ApplicationWindow):
         self.btn_sort.connect("clicked", self._on_sort_clicked)
         self.header_bar.pack_start(self.btn_sort)
 
-        # 3. Search Entry in Title Area
+        # 3. Select Mode Toggle Button
+        self.btn_select_mode = Gtk.ToggleButton()
+        sel_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
+        sel_icon = Gtk.Image.new_from_icon_name("selection-mode-symbolic")
+        self.select_mode_label = Gtk.Label(label=tr("btn_select_mode"))
+        sel_box.append(sel_icon)
+        sel_box.append(self.select_mode_label)
+        self.btn_select_mode.set_child(sel_box)
+        self.btn_select_mode.set_tooltip_text(tr("btn_select_mode_tooltip"))
+        self.btn_select_mode.connect("toggled", self._on_select_mode_toggled)
+        self.header_bar.pack_start(self.btn_select_mode)
+
+        # 4. Search Entry in Title Area
         self.search_entry = Gtk.SearchEntry()
         self.search_entry.set_placeholder_text(tr("search_placeholder"))
-        self.search_entry.set_size_request(240, -1)
+        self.search_entry.set_size_request(220, -1)
         self.search_entry.connect("search-changed", self._on_search_changed)
         self.header_bar.set_title_widget(self.search_entry)
 
@@ -212,8 +225,23 @@ class MainWindow(Adw.ApplicationWindow):
         )
         dlg.present()
 
+    def _on_select_mode_toggled(self, btn: Gtk.ToggleButton):
+        self.grid_canvas.toggle_selection_mode(btn.get_active())
+
+    def _on_create_folder_with_items(self, items: List[str]):
+        dlg = NewFolderDialog(
+            parent_window=self,
+            all_apps=self.backend.apps,
+            initial_selected_apps=items,
+            target_page_idx=self.grid_canvas.current_page_idx,
+            on_created=self._on_folder_created
+        )
+        dlg.present()
+
     def _on_folder_created(self, name: str, app_ids: List[str], page_idx: int):
         folder = self.backend.create_folder(name, app_ids, page_idx)
+        self.btn_select_mode.set_active(False)
+        self.grid_canvas.deselect_all()
         self.grid_canvas.refresh()
         self.show_toast(tr("toast_folder_created", name=folder.name))
 
@@ -327,5 +355,7 @@ class MainWindow(Adw.ApplicationWindow):
         self.search_entry.set_placeholder_text(tr("search_placeholder"))
         self.new_folder_label.set_text(tr("btn_new_folder"))
         self.catalog_label.set_text(tr("btn_unassigned"))
+        self.select_mode_label.set_text(tr("btn_select_mode"))
+        self.btn_select_mode.set_tooltip_text(tr("btn_select_mode_tooltip"))
         self._build_menu_popover()
         self.grid_canvas.refresh()
