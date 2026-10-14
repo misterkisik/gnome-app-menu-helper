@@ -131,14 +131,8 @@ APP_CSS = """
 }
 
 .gnome-mascot-box {
-    background-color: rgba(20, 20, 26, 0.75);
-    border-left: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.mascot-speech-card {
-    background-color: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 16px;
+    background-color: transparent;
+    border-left: 1px solid rgba(255, 255, 255, 0.05);
 }
 """
 
