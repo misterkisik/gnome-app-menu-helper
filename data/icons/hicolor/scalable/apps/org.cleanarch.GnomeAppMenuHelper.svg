@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3584e4"/>
+      <stop offset="100%" stop-color="#1c71d8"/>
+    </linearGradient>
+    <linearGradient id="folderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#62a0ea"/>
+      <stop offset="100%" stop-color="#1a5fb4"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Base Squircle -->
+  <rect x="8" y="8" width="112" height="112" rx="28" fill="url(#bg)" filter="url(#shadow)"/>
+  <rect x="9" y="9" width="110" height="110" rx="27" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-opacity="0.25"/>
+
+  <!-- App Grid Cells (3x3 grid) -->
+  <!-- Row 1 -->
+  <rect x="24" y="24" width="22" height="22" rx="6" fill="#f66151"/>
+  <rect x="53" y="24" width="22" height="22" rx="6" fill="#33d17a"/>
+  <rect x="82" y="24" width="22" height="22" rx="6" fill="#f9f06b"/>
+
+  <!-- Row 2 -->
+  <rect x="24" y="53" width="22" height="22" rx="6" fill="#dc8add"/>
+  <!-- Center folder icon -->
+  <rect x="51" y="51" width="26" height="26" rx="8" fill="url(#folderGrad)" stroke="#ffffff" stroke-width="1.5"/>
+  <circle cx="58" cy="58" r="2.5" fill="#ffffff"/>
+  <circle cx="70" cy="58" r="2.5" fill="#ffffff"/>
+  <circle cx="58" cy="70" r="2.5" fill="#ffffff"/>
+  <circle cx="70" cy="70" r="2.5" fill="#ffffff"/>
+  <rect x="82" y="53" width="22" height="22" rx="6" fill="#ffbe6f"/>
+
+  <!-- Row 3 -->
+  <rect x="24" y="82" width="22" height="22" rx="6" fill="#99c1f1"/>
+  <rect x="53" y="82" width="22" height="22" rx="6" fill="#c061cb"/>
+  <rect x="82" y="82" width="22" height="22" rx="6" fill="#8ff0a4"/>
+</svg>

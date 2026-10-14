@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gnomeappmenuhelper"
+version = "1.0.0"
+authors = [
+  { name = "MisterKisik" }
+]
+description = "Визуальный редактор сетки приложений и папок GNOME"
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: POSIX :: Linux",
+    "Environment :: X11 Applications :: GTK",
+]
+dependencies = [
+    "PyGObject>=3.40.0",
+]
+
+[project.scripts]
+gnome-app-menu-helper = "gnomeappmenuhelper.app:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

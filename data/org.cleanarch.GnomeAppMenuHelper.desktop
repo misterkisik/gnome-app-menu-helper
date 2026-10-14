@@ -1,0 +1,15 @@
+[Desktop Entry]
+Name=GnomeAppMenuHelper
+GenericName=GNOME App Grid & Folder Manager
+Comment=Visual GNOME application grid, folders and page organizer
+Comment[ru]=Визуальный конфигуратор сетки приложений, папок и страниц GNOME
+Comment[es]=Organizador visual de cuadrícula de aplicaciones, carpetas y páginas de GNOME
+Comment[fr]=Organisateur visuel de grille d'applications, dossiers et pages GNOME
+Exec=gnome-app-menu-helper
+Icon=org.cleanarch.GnomeAppMenuHelper
+Terminal=false
+Type=Application
+Categories=GNOME;GTK;System;Settings;Utility;
+Keywords=gnome;menu;grid;apps;folders;organizer;settings;adwaita;
+StartupNotify=true
+StartupWMClass=org.cleanarch.GnomeAppMenuHelper

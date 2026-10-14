@@ -1,0 +1,3 @@
+"""
+GnomeAppMenuHelper GUI Views
+"""

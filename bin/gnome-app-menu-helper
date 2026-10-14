@@ -1,0 +1,20 @@
+#!/usr/bin/env python3
+"""
+GnomeAppMenuHelper executable launcher
+"""
+
+import sys
+import os
+
+# If running uninstalled from repository
+script_dir = os.path.dirname(os.path.realpath(__file__))
+repo_root = os.path.abspath(os.path.join(script_dir, ".."))
+src_dir = os.path.join(repo_root, "src")
+
+if os.path.isdir(src_dir) and src_dir not in sys.path:
+    sys.path.insert(0, src_dir)
+
+from gnomeappmenuhelper.app import main
+
+if __name__ == "__main__":
+    sys.exit(main())
