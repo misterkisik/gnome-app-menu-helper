@@ -1,6 +1,6 @@
 """
-MascotWidget component displaying the anime fox-girl (Senko-san) standing peacefully
-beside the GNOME application grid.
+MascotWidget component displaying the anime fox-girl (Senko-san) centered and scaled
+in the side area of the GNOME application grid.
 """
 
 import os
@@ -26,11 +26,11 @@ def find_mascot_image_path() -> Optional[str]:
 class MascotWidget(Gtk.Box):
     def __init__(self):
         super().__init__(orientation=Gtk.Orientation.VERTICAL)
-        self.set_size_request(230, -1)
-        self.set_margin_start(6)
-        self.set_margin_end(6)
-        self.set_margin_top(12)
-        self.set_margin_bottom(12)
+        self.set_size_request(310, -1)
+        self.set_margin_start(4)
+        self.set_margin_end(4)
+        self.set_margin_top(8)
+        self.set_margin_bottom(8)
         self.add_css_class("gnome-mascot-box")
 
         mascot_path = find_mascot_image_path()
@@ -39,7 +39,7 @@ class MascotWidget(Gtk.Box):
             self.picture.set_can_shrink(True)
             if hasattr(Gtk, "ContentFit"):
                 self.picture.set_content_fit(Gtk.ContentFit.CONTAIN)
-            self.picture.set_valign(Gtk.Align.END)
+            self.picture.set_valign(Gtk.Align.CENTER)
             self.picture.set_halign(Gtk.Align.CENTER)
             self.picture.set_vexpand(True)
             self.picture.set_hexpand(True)
@@ -50,7 +50,6 @@ class MascotWidget(Gtk.Box):
             self.append(fallback)
 
     def set_mood(self, mood: str, **kwargs):
-        # Kept for compatibility so caller doesn't error
         pass
 
     def retranslate(self):

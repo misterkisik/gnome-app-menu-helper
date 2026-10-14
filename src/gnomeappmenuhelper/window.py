@@ -62,8 +62,8 @@ class MainWindow(Adw.ApplicationWindow):
         self.split_view.set_content(self.grid_canvas)
         self.split_view.set_sidebar(self.mascot)
         self.split_view.set_show_sidebar(True)
-        self.split_view.set_max_sidebar_width(280)
-        self.split_view.set_min_sidebar_width(230)
+        self.split_view.set_max_sidebar_width(380)
+        self.split_view.set_min_sidebar_width(300)
 
         self.toolbar_view.set_content(self.split_view)
 
@@ -144,16 +144,7 @@ class MainWindow(Adw.ApplicationWindow):
         self.btn_catalog.connect("clicked", self._on_catalog_clicked)
         self.header_bar.pack_end(self.btn_catalog)
 
-        # 6. Mascot Toggle Button (clean fox icon without text)
-        self.btn_mascot = Gtk.ToggleButton()
-        fox_icon = Gtk.Label(label="🦊")
-        self.btn_mascot.set_child(fox_icon)
-        self.btn_mascot.set_tooltip_text(tr("mascot_btn_toggle_tooltip"))
-        self.btn_mascot.set_active(True)
-        self.btn_mascot.connect("toggled", lambda b: self.split_view.set_show_sidebar(b.get_active()))
-        self.header_bar.pack_end(self.btn_mascot)
-
-        # 7. Options Menu Button
+        # 6. Options Menu Button
         self.menu_btn = Gtk.MenuButton()
         self.menu_btn.set_icon_name("open-menu-symbolic")
         self.menu_btn.set_tooltip_text(tr("menu_options_tip"))
@@ -394,7 +385,6 @@ class MainWindow(Adw.ApplicationWindow):
         self.catalog_label.set_text(tr("btn_unassigned"))
         self.select_mode_label.set_text(tr("btn_select_mode"))
         self.btn_select_mode.set_tooltip_text(tr("btn_select_mode_tooltip"))
-        self.btn_mascot.set_tooltip_text(tr("mascot_btn_toggle_tooltip"))
         self.mascot.retranslate()
         self._build_menu_popover()
         self.grid_canvas.refresh()
