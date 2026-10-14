@@ -62,8 +62,9 @@ class MainWindow(Adw.ApplicationWindow):
         self.split_view.set_content(self.grid_canvas)
         self.split_view.set_sidebar(self.mascot)
         self.split_view.set_show_sidebar(True)
-        self.split_view.set_max_sidebar_width(380)
         self.split_view.set_min_sidebar_width(300)
+        self.split_view.set_max_sidebar_width(420)
+        self.split_view.set_sidebar_width_fraction(0.28)
 
         self.toolbar_view.set_content(self.split_view)
 

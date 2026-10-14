@@ -26,7 +26,7 @@ def find_mascot_image_path() -> Optional[str]:
 class MascotWidget(Gtk.Box):
     def __init__(self):
         super().__init__(orientation=Gtk.Orientation.VERTICAL)
-        self.set_size_request(310, -1)
+        self.set_size_request(320, -1)
         self.set_margin_start(4)
         self.set_margin_end(4)
         self.set_margin_top(8)
@@ -45,7 +45,7 @@ class MascotWidget(Gtk.Box):
             self.picture.set_hexpand(True)
             self.append(self.picture)
         else:
-            fallback = Gtk.Label(label="🦊")
+            fallback = Gtk.Box()
             fallback.set_vexpand(True)
             self.append(fallback)
 
