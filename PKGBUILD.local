@@ -1,0 +1,66 @@
+# Maintainer: MisterKisik
+# Локальная сборка и установка пакета: makepkg -p PKGBUILD.local -si
+
+pkgname=gnome-app-menu-helper
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="Визуальный редактор сетки приложений и папок GNOME (GTK 4 / Libadwaita)"
+arch=('any')
+url="https://github.com/misterkisik/gnome-app-menu-helper"
+license=('GPL-3.0-or-later')
+depends=(
+    'python'
+    'python-gobject'
+    'gtk4'
+    'libadwaita'
+)
+makedepends=(
+    'python-build'
+    'python-installer'
+    'python-wheel'
+    'python-setuptools'
+)
+source=()
+sha256sums=()
+
+build() {
+    cd "$startdir"
+    if python -c "import build" &>/dev/null; then
+        python -m build --wheel --no-isolation
+    else
+        python setup.py bdist_wheel
+    fi
+}
+
+package() {
+    cd "$startdir"
+    if python -c "import installer" &>/dev/null; then
+        python -m installer --destdir="$pkgdir" dist/*.whl
+    else
+        python setup.py install --root="$pkgdir" --optimize=1 --skip-build
+    fi
+
+    # Desktop entry
+    install -Dm644 "$startdir/data/org.cleanarch.GnomeAppMenuHelper.desktop" "$pkgdir/usr/share/applications/org.cleanarch.GnomeAppMenuHelper.desktop"
+    ln -sf org.cleanarch.GnomeAppMenuHelper.desktop "$pkgdir/usr/share/applications/gnome-app-menu-helper.desktop"
+
+    # Icons
+    for size in 16 24 32 48 64 128 256 512; do
+        if [ -f "$startdir/data/icons/hicolor/${size}x${size}/apps/org.cleanarch.GnomeAppMenuHelper.png" ]; then
+            install -Dm644 "$startdir/data/icons/hicolor/${size}x${size}/apps/org.cleanarch.GnomeAppMenuHelper.png" \
+                "$pkgdir/usr/share/icons/hicolor/${size}x${size}/apps/org.cleanarch.GnomeAppMenuHelper.png"
+            ln -sf org.cleanarch.GnomeAppMenuHelper.png "$pkgdir/usr/share/icons/hicolor/${size}x${size}/apps/gnome-app-menu-helper.png"
+        fi
+    done
+
+    if [ -f "$startdir/data/icons/hicolor/scalable/apps/org.cleanarch.GnomeAppMenuHelper.svg" ]; then
+        install -Dm644 "$startdir/data/icons/hicolor/scalable/apps/org.cleanarch.GnomeAppMenuHelper.svg" \
+            "$pkgdir/usr/share/icons/hicolor/scalable/apps/org.cleanarch.GnomeAppMenuHelper.svg"
+        ln -sf org.cleanarch.GnomeAppMenuHelper.svg "$pkgdir/usr/share/icons/hicolor/scalable/apps/gnome-app-menu-helper.svg"
+    fi
+
+    # Mascot image
+    if [ -f "$startdir/data/mascot.png" ]; then
+        install -Dm644 "$startdir/data/mascot.png" "$pkgdir/usr/share/gnome-app-menu-helper/mascot.png"
+    fi
+}

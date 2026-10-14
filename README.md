@@ -78,24 +78,131 @@
 
 ---
 
-## 💻 Установка и запуск / Installation
+## 🛠 Системные требования / Requirements
 
-### 1. Запуск без установки / Run directly
+Для работы необходимы **Python 3.10+**, **GTK 4** и **Libadwaita**:
+
+| Дистрибутив / Distro | Команда установки зависимостей / Dependencies command |
+| :--- | :--- |
+| **Arch Linux / Manjaro** | `sudo pacman -S python python-gobject gtk4 libadwaita` |
+| **Fedora** | `sudo dnf install python3 python3-gobject gtk4 libadwaita` |
+| **Ubuntu / Debian** | `sudo apt install python3 python3-gi gir1.2-gtk-4.0 gir1.2-adw-1` |
+| **openSUSE** | `sudo zypper install python3 python3-gobject typelib-Gtk-4_0 typelib-Adw-1` |
+
+---
+
+## 🚀 Подробное руководство по установке / Installation Guide
+
+### 🇷🇺 Русский
+
+#### Способ 1: Сборка и установка через makepkg в Arch Linux (Рекомендуется)
+Если вы используете Arch Linux, Manjaro, CachyOS или EndeavourOS:
+```bash
+# 1. Склонируйте репозиторий
+git clone https://github.com/misterkisik/gnome-app-menu-helper.git
+cd gnome-app-menu-helper
+
+# 2. Соберите и установите пакет одной командой
+makepkg -p PKGBUILD.local -si
+```
+Команда `makepkg -si` автоматически соберёт `.pkg.tar.zst`, установит бинарник `/usr/bin/gnome-app-menu-helper`, зарегистрирует `.desktop`-файл, все размеры иконок от 16x16 до 512x512 + SVG и арт маскота.
+
+#### Способ 2: Установка из AUR (yay / paru)
+```bash
+yay -S gnome-app-menu-helper
+# или
+paru -S gnome-app-menu-helper
+```
+
+#### Способ 3: Установка через Python pip / pipx (Любой Linux)
+Подходит для Ubuntu, Debian, Fedora, openSUSE и других дистрибутивов:
+```bash
+git clone https://github.com/misterkisik/gnome-app-menu-helper.git
+cd gnome-app-menu-helper
+
+# Установка в домашний каталог пользователя
+pip install --user .
+```
+*(Если в вашем дистрибутиве действует политика PEP 668, используйте `pipx install .` или добавьте `--break-system-packages`)*.
+
+##### 📌 Регистрация ярлыка и иконки в меню GNOME при установке через pip:
+```bash
+# Ярлык приложения
+mkdir -p ~/.local/share/applications
+cp data/org.cleanarch.GnomeAppMenuHelper.desktop ~/.local/share/applications/
+
+# Иконки приложения
+mkdir -p ~/.local/share/icons/hicolor
+cp -r data/icons/hicolor/* ~/.local/share/icons/hicolor/
+gtk-update-icon-cache -q ~/.local/share/icons/hicolor
+
+# Ассеты маскота
+mkdir -p ~/.local/share/gnome-app-menu-helper
+cp data/mascot.png ~/.local/share/gnome-app-menu-helper/
+```
+
+#### Способ 4: Портативный запуск без установки
+Вы можете запустить приложение сразу из папки без инсталляции в систему:
 ```bash
 git clone https://github.com/misterkisik/gnome-app-menu-helper.git
 cd gnome-app-menu-helper
 ./bin/gnome-app-menu-helper
 ```
 
-### 2. Установка в систему через pip / User install via pip
+---
+
+### 🇬🇧 English
+
+#### Method 1: Arch Linux Native Build (makepkg)
 ```bash
-pip install . --user
+git clone https://github.com/misterkisik/gnome-app-menu-helper.git
+cd gnome-app-menu-helper
+makepkg -p PKGBUILD.local -si
 ```
 
-### 3. Сборка пакета для Arch Linux / Arch Linux package
+#### Method 2: AUR Package
 ```bash
-makepkg -si
+yay -S gnome-app-menu-helper
 ```
+
+#### Method 3: Python pip / pipx (Universal)
+```bash
+git clone https://github.com/misterkisik/gnome-app-menu-helper.git
+cd gnome-app-menu-helper
+pip install --user .
+```
+
+#### Method 4: Run Directly (Portable)
+```bash
+git clone https://github.com/misterkisik/gnome-app-menu-helper.git
+cd gnome-app-menu-helper
+./bin/gnome-app-menu-helper
+```
+
+---
+
+## 🎮 Запуск и использование / Usage
+
+- **Из системного меню GNOME**: Нажмите клавишу `Super` (Windows) и введите в поиск `GnomeAppMenuHelper`.
+- **Из любого терминала**:
+  ```bash
+  gnome-app-menu-helper
+  ```
+
+---
+
+## 🗑 Удаление / Uninstall
+
+- **Arch Linux (pacman)**:
+  ```bash
+  sudo pacman -R gnome-app-menu-helper
+  ```
+- **Pip**:
+  ```bash
+  pip uninstall gnome-app-menu-helper
+  rm -f ~/.local/share/applications/org.cleanarch.GnomeAppMenuHelper.desktop
+  rm -rf ~/.local/share/gnome-app-menu-helper
+  ```
 
 ---
 
