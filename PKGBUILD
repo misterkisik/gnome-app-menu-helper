@@ -57,4 +57,9 @@ package() {
             "$pkgdir/usr/share/icons/hicolor/scalable/apps/org.cleanarch.GnomeAppMenuHelper.svg"
         ln -sf org.cleanarch.GnomeAppMenuHelper.svg "$pkgdir/usr/share/icons/hicolor/scalable/apps/gnome-app-menu-helper.svg"
     fi
+
+    # Mascot image
+    if [ -f "data/mascot.png" ]; then
+        install -Dm644 data/mascot.png "$pkgdir/usr/share/gnome-app-menu-helper/mascot.png"
+    fi
 }

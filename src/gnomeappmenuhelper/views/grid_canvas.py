@@ -25,6 +25,7 @@ class GridCanvas(Gtk.Box):
         on_create_folder_with_items: Callable[[List[str]], None],
         on_delete_folder: Callable[[str], None],
         on_toast: Callable[[str], None],
+        on_selection_changed: Optional[Callable[[int], None]] = None,
     ):
         super().__init__(orientation=Gtk.Orientation.VERTICAL)
         self.backend = backend
@@ -33,6 +34,7 @@ class GridCanvas(Gtk.Box):
         self.on_create_folder_with_items = on_create_folder_with_items
         self.on_delete_folder = on_delete_folder
         self.on_toast = on_toast
+        self.on_selection_changed = on_selection_changed
 
         self.current_page_idx = 0
         self.search_filter = ""
@@ -248,6 +250,8 @@ class GridCanvas(Gtk.Box):
         self.btn_sel_move_page.set_sensitive(has_items)
         self.btn_sel_move_folder.set_sensitive(has_items)
         self.btn_sel_new_folder.set_sensitive(has_items)
+        if self.on_selection_changed:
+            self.on_selection_changed(count)
 
     def _on_bulk_move_to_page_clicked(self, btn):
         if not self.selected_items:

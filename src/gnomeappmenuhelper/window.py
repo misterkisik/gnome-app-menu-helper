@@ -17,6 +17,7 @@ from gnomeappmenuhelper.views.folder_dialog import FolderDialog
 from gnomeappmenuhelper.views.new_folder_dialog import NewFolderDialog
 from gnomeappmenuhelper.views.catalog_dialog import CatalogDialog
 from gnomeappmenuhelper.views.language_dialog import FirstRunLanguageDialog
+from gnomeappmenuhelper.views.mascot_widget import MascotWidget
 from gnomeappmenuhelper.i18n import tr, add_language_change_listener, is_first_run
 
 
@@ -50,9 +51,21 @@ class MainWindow(Adw.ApplicationWindow):
             on_create_folder_prompt=self._on_create_folder_prompt,
             on_create_folder_with_items=self._on_create_folder_with_items,
             on_delete_folder=self._on_delete_folder,
-            on_toast=self.show_toast
+            on_toast=self.show_toast,
+            on_selection_changed=self._on_selection_changed
         )
-        self.toolbar_view.set_content(self.grid_canvas)
+
+        # Mascot Assistant Sidebar & OverlaySplitView
+        self.mascot = MascotWidget()
+        self.split_view = Adw.OverlaySplitView()
+        self.split_view.set_sidebar_position(Gtk.PackType.END)
+        self.split_view.set_content(self.grid_canvas)
+        self.split_view.set_sidebar(self.mascot)
+        self.split_view.set_show_sidebar(True)
+        self.split_view.set_max_sidebar_width(280)
+        self.split_view.set_min_sidebar_width(230)
+
+        self.toolbar_view.set_content(self.split_view)
 
         # Listen for runtime language switches
         add_language_change_listener(self._update_ui_strings)
@@ -131,7 +144,20 @@ class MainWindow(Adw.ApplicationWindow):
         self.btn_catalog.connect("clicked", self._on_catalog_clicked)
         self.header_bar.pack_end(self.btn_catalog)
 
-        # 6. Options Menu Button
+        # 6. Mascot Toggle Button
+        self.btn_mascot = Gtk.ToggleButton()
+        mascot_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
+        mascot_icon = Gtk.Label(label="🦊")
+        self.mascot_label = Gtk.Label(label=tr("mascot_btn_toggle"))
+        mascot_box.append(mascot_icon)
+        mascot_box.append(self.mascot_label)
+        self.btn_mascot.set_child(mascot_box)
+        self.btn_mascot.set_tooltip_text(tr("mascot_btn_toggle_tooltip"))
+        self.btn_mascot.set_active(True)
+        self.btn_mascot.connect("toggled", lambda b: self.split_view.set_show_sidebar(b.get_active()))
+        self.header_bar.pack_end(self.btn_mascot)
+
+        # 7. Options Menu Button
         self.menu_btn = Gtk.MenuButton()
         self.menu_btn.set_icon_name("open-menu-symbolic")
         self.menu_btn.set_tooltip_text(tr("menu_options_tip"))
@@ -188,9 +214,16 @@ class MainWindow(Adw.ApplicationWindow):
         toast.set_timeout(3)
         self.toast_overlay.add_toast(toast)
 
+    def _on_selection_changed(self, count: int):
+        if count > 0:
+            self.mascot.set_mood("selected", count=count)
+        else:
+            self.mascot.set_mood("idle")
+
     def _on_apply_clicked(self, _btn):
         if self.backend.save_to_gnome():
             self.show_toast(tr("toast_applied"))
+            self.mascot.set_mood("applied")
         else:
             self.show_toast("Ошибка сохранения в GNOME Shell")
 
@@ -198,6 +231,7 @@ class MainWindow(Adw.ApplicationWindow):
         self.backend.sort_alphabetically(self.grid_canvas.current_page_idx)
         self.grid_canvas.refresh()
         self.show_toast(tr("toast_sorted"))
+        self.mascot.set_mood("sorted")
 
     def _on_search_changed(self, entry):
         self.grid_canvas.set_search_filter(entry.get_text())
@@ -244,6 +278,13 @@ class MainWindow(Adw.ApplicationWindow):
         self.grid_canvas.deselect_all()
         self.grid_canvas.refresh()
         self.show_toast(tr("toast_folder_created", name=folder.name))
+        self.mascot.set_mood("folder_created", name=folder.name)
+
+    def _on_delete_folder(self, folder_id: str):
+        self.backend.unpack_folder(folder_id, self.grid_canvas.current_page_idx)
+        self.grid_canvas.refresh()
+        self.show_toast(tr("toast_folder_deleted"))
+        self.mascot.set_mood("folder_deleted")
 
     def _on_open_folder(self, folder_id: str):
         folder = self.backend.folders.get(folder_id)
@@ -357,5 +398,8 @@ class MainWindow(Adw.ApplicationWindow):
         self.catalog_label.set_text(tr("btn_unassigned"))
         self.select_mode_label.set_text(tr("btn_select_mode"))
         self.btn_select_mode.set_tooltip_text(tr("btn_select_mode_tooltip"))
+        self.mascot_label.set_text(tr("mascot_btn_toggle"))
+        self.btn_mascot.set_tooltip_text(tr("mascot_btn_toggle_tooltip"))
+        self.mascot.retranslate()
         self._build_menu_popover()
         self.grid_canvas.refresh()

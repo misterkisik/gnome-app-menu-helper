@@ -55,10 +55,20 @@ class FirstRunLanguageDialog(Adw.Window):
         content.set_margin_top(20)
         content.set_margin_bottom(24)
 
-        icon = Gtk.Image.new_from_icon_name("preferences-desktop-locale-symbolic")
-        icon.set_pixel_size(56)
-        icon.add_css_class("accent")
-        content.append(icon)
+        import os
+        mascot_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data", "mascot.png"))
+        if os.path.exists(mascot_path):
+            pic = Gtk.Picture.new_for_filename(mascot_path)
+            pic.set_size_request(96, 96)
+            pic.set_can_shrink(True)
+            if hasattr(Gtk, "ContentFit"):
+                pic.set_content_fit(Gtk.ContentFit.CONTAIN)
+            content.append(pic)
+        else:
+            icon = Gtk.Image.new_from_icon_name("preferences-desktop-locale-symbolic")
+            icon.set_pixel_size(56)
+            icon.add_css_class("accent")
+            content.append(icon)
 
         self.title_label = Gtk.Label(label=tr("welcome_title"))
         self.title_label.add_css_class("title-2")

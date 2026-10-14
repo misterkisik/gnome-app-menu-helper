@@ -167,6 +167,74 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         'fr': '{count} applications ajoutées au dossier « {name} »'
     },
 
+    # Mascot
+    'mascot_name': {
+        'ru': 'Сэнко-сан',
+        'en': 'Senko-san',
+        'es': 'Senko-san',
+        'fr': 'Senko-san'
+    },
+    'mascot_btn_toggle': {
+        'ru': 'Маскот',
+        'en': 'Mascot',
+        'es': 'Mascota',
+        'fr': 'Mascotte'
+    },
+    'mascot_btn_toggle_tooltip': {
+        'ru': 'Показать/скрыть помощника-маскота',
+        'en': 'Toggle mascot assistant',
+        'es': 'Mostrar/ocultar asistente mascota',
+        'fr': 'Afficher/masquer l\'assistant mascotte'
+    },
+    'mascot_idle': {
+        'ru': 'Давай наведём уют и порядок в твоём меню приложений! 🦊✨',
+        'en': 'Let\'s bring cozy order to your GNOME app grid! 🦊✨',
+        'es': '¡Vamos a poner orden y comodidad en tu menú de GNOME! 🦊✨',
+        'fr': 'Mettons de l\'ordre et de la clarté dans ton menu GNOME ! 🦊✨'
+    },
+    'mascot_applied': {
+        'ru': 'Ура! Изменения применились в GNOME Shell, теперь всё выглядит потрясающе! 🚀',
+        'en': 'Hooray! Changes applied to GNOME Shell, it looks amazing now! 🚀',
+        'es': '¡Hurra! Cambios aplicados a GNOME Shell, ¡se ve genial! 🚀',
+        'fr': 'Hourra ! Modifications appliquées à GNOME Shell, c\'est magnifique ! 🚀'
+    },
+    'mascot_selected': {
+        'ru': 'Ого, выбрано {count} ярлыков! Я помогу перенести их или сложить в папку! 🔧',
+        'en': 'Whoa, {count} items selected! I can help move them or put them into a folder! 🔧',
+        'es': '¡Vaya, {count} elementos seleccionados! ¡Te ayudaré a moverlos o agruparlos! 🔧',
+        'fr': 'Waouh, {count} éléments sélectionnés ! Je peux aider à les déplacer ou les ranger ! 🔧'
+    },
+    'mascot_folder_created': {
+        'ru': 'Какая отличная папка «{name}»! Теперь здесь идеальный порядок! 📁',
+        'en': 'What a great folder \'{name}\'! So tidy and organized! 📁',
+        'es': '¡Qué gran carpeta \'{name}\'! ¡Todo ordenado y en su lugar! 📁',
+        'fr': 'Quel beau dossier « {name} » ! Tout est bien rangé ! 📁'
+    },
+    'mascot_sorted': {
+        'ru': 'Идеальный порядок от А до Я! Глаз радуется! ✨',
+        'en': 'Perfect A-Z order! Everything is easy to find! ✨',
+        'es': '¡Orden perfecto de la A a la Z! ¡Da gusto verlo! ✨',
+        'fr': 'Ordre parfait de A à Z ! Un vrai plaisir pour les yeux ! ✨'
+    },
+    'mascot_tip_1': {
+        'ru': 'Подсказка: зажми Ctrl и кликай по иконкам, чтобы быстро выделить несколько! 💡',
+        'en': 'Tip: Hold Ctrl and click icons to quickly select multiple! 💡',
+        'es': 'Consejo: mantén pulsado Ctrl y haz clic para seleccionar varios. 💡',
+        'fr': 'Astuce : maintiens Ctrl et clique pour sélectionner plusieurs icônes ! 💡'
+    },
+    'mascot_tip_2': {
+        'ru': 'Подсказка: перетащи один ярлык на другой, чтобы моментально создать новую папку! 💡',
+        'en': 'Tip: Drag an app onto another to instantly create a new folder! 💡',
+        'es': 'Consejo: ¡arrastra una aplicación sobre otra para crear una carpeta! 💡',
+        'fr': 'Astuce : glisse une application sur une autre pour créer un dossier ! 💡'
+    },
+    'mascot_tip_3': {
+        'ru': 'Подсказка: правый клик по любому приложению открывает удобное меню действий! 💡',
+        'en': 'Tip: Right-click any app icon for a handy action menu! 💡',
+        'es': 'Consejo: ¡haz clic derecho en cualquier app para ver opciones útiles! 💡',
+        'fr': 'Astuce : fais un clic droit sur une application pour un menu complet ! 💡'
+    },
+
     # Pagination
     'page_info': {
         'ru': 'Страница {current} из {total}',
