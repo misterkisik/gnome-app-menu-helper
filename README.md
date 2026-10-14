@@ -1,3 +1,5 @@
+[![Telegram](https://img.shields.io/badge/Telegram_Канал-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/justutilities)
+
 # GnomeAppMenuHelper 🚀
 > **Визуальный редактор сетки приложений и папок GNOME**  
 > *Visual GNOME App Grid, Folder and Page Organizer (GTK 4 / Libadwaita)*
